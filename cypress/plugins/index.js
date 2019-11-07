@@ -17,4 +17,9 @@ module.exports = (on, config) => {
   // `config` is the resolved Cypress config
   on('file:preprocessor', cypressTypeScriptPreprocessor);
 
+  config.env.v2 = process.env.v2 || false;
+
 };
+
+require('@applitools/eyes-cypress')(module);
+

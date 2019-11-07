@@ -1,81 +1,70 @@
 export abstract class BaseComponent {
-  abstract pageUrl: string;
-
-  navigateTo() {
-    cy.visit(`${ this.pageUrl }`);
+  navigateTo(url: string) {
+    cy.visit(url);
   }
 
-  scrollToMenu(subMenu: string) {
-    cy.get('examples h3').contains(subMenu).scrollIntoView();
+  isUrlContains(url: string) {
+    cy.url().should('to.contain', url);
   }
 
-  clickOnDemoMenu(subMenu: string) {
-    cy.get('add-nav').contains('a', subMenu).click();
+  clickOn(baseSelector: string, buttonIndex?: number) {
+    cy.get(baseSelector).eq(buttonIndex ? buttonIndex : 0).click();
   }
 
-  clickOnBtn(baseSelector: string, buttonIndex?: number) {
-    cy.get(`${ baseSelector } button`).eq(buttonIndex ? buttonIndex : 0).click();
-  }
-
-  isInputHaveAttrs(baseSelector: string, attributes: any, inputIndex = 0) {
-    cy.get(`${baseSelector} input`).eq(inputIndex)
-      .then(input => {
-        let i = 0;
-        for (; i < attributes.length; i++) {
-          expect(input).to.have.attr(attributes[i].attr, attributes[i].value);
-        }
-      });
+  isPlaceholderEqual(baseSelector: string, placeholderValue: string, inputIndex = 0) {
+    cy.get(baseSelector).eq(inputIndex)
+      .should('to.have.attr', 'placeholder', placeholderValue);
   }
 
   isInputValueEqual(baseSelector: string, expectedTxt: string, inputIndex = 0) {
-    cy.get(`${baseSelector} input`).eq(inputIndex).should('to.have.value', expectedTxt);
+    cy.get(baseSelector).eq(inputIndex).should('to.have.value', expectedTxt);
   }
 
   clearInputAndSendKeys(baseSelector: string, dataToSend: string, inputIndex = 0) {
-    cy.get(`${baseSelector} input`).eq(inputIndex).clear().type(dataToSend);
+    cy.get(baseSelector).eq(inputIndex).clear().type(dataToSend);
   }
 
   clickEnterOnInput(baseSelector: string, inputIndex = 0) {
     cy.get(`${baseSelector} input`).eq(inputIndex).type('{enter}');
   }
 
-  pressEsc() {
-    cy.get(`body input`).type('{esc}', { force: true });
-  }
-
-  isDemoContainsTxt(baseSelector: string, expectedTxt: string, expectedTxtOther?: string) {
-    cy.get(`${baseSelector}`).invoke('text')
-      .should(blockTxt => {
-        expect(blockTxt).to.contains(expectedTxt);
-        expect(blockTxt).to.contains(expectedTxtOther ? expectedTxtOther : expectedTxt);
+  isElementTextContains(baseSelector: string, text: string, elementNumber?: number) {
+      cy.get(baseSelector).eq(elementNumber ? elementNumber : 0).then(elem => {
+        expect(elem.text().toLowerCase()).to.contain(text.toLowerCase());
       });
   }
 
-  isButtonExist(baseSelector: string, buttonName: string, buttonNumber?: number, exist = true) {
-    if (exist === true) {
-      cy.get(`${baseSelector} button`).eq(buttonNumber ? buttonNumber : 0).invoke('text')
-        .should(btnTxt => expect(btnTxt).to.equal(buttonName));
-    } else {
-      cy.get(`${baseSelector} button`).contains(buttonName).should('not.exist');
-    }
+  isVisible(baseSelector: string, elementNumber = 0) {
+    cy.get(baseSelector).eq(elementNumber)
+      .should('be.visible');
   }
 
-  isSelectExist(baseSelector: string, selectText: string, selectNumber = 0) {
-    cy.get(`${baseSelector} select`).eq(selectNumber).invoke('text')
-      .should(btnTxt => expect(btnTxt).to.contain(selectText));
+  isLengthEqual(baseSelector: string, length: number) {
+    cy.get(baseSelector)
+      .should('have.length', length);
   }
 
-  selectOne(baseSelector: string, selectToChose: string, selectNumber = 0) {
-    cy.get(`${baseSelector} select`).eq(selectNumber).select(selectToChose);
+  waitChart() {
+    cy.wait(500);
   }
 
-  isCodePreviewExist(baseSelector: string, previewText: string, exist = true, previewNumber?: number) {
-    if (exist) {
-      cy.get(`${baseSelector} .code-preview`).eq(previewNumber ? previewNumber : 0).invoke('text')
-        .should(btnTxt => expect(btnTxt).to.contain(previewText));
-    } else {
-      cy.get(`${baseSelector} .code-preview`)
-        .should('not.exist');
-    }
+  isExistVisually(baseSelector: string, testName: string, matchLevel = 'Strict', elementNumber = 0) {
+    cy.get(baseSelector).eq(elementNumber)
+      .eyesOpen({
+        appName: 'Test app',
+        matchLevel: matchLevel,
+        testName: testName,
+        browser: [{
+          name: 'chrome',
+          browserVersion: 'latest',
+          width: 1240,
+          height: 800
+        }]
+      })
+      .eyesCheckWindow({
+        sizeMode: 'selector',
+        selector: baseSelector,
+      })
+      .eyesClose();
   }
 }

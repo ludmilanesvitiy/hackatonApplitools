@@ -1,25 +1,12 @@
-# RunIT TestProject 2019
+# Hackaton TestProject 2019
 
 ## How to install
 
 - `git clone`
 - `npm i`
 
-## Running end-to-end Protractor tests
+## Running end-to-end Cypress tests and Applitools tests
 
-- `npm run pre-protractor`
-- `npm run protractor-e2e`
+- `npm run test-v1` - for testing the 1st version of the app
 
-## Running end-to-end Cypress tests
-
-- `npm run cypress-run`
-
-- `npm run cypress-open`
-
-## Important links
-
-[https://www.protractortest.org/#/](https://www.protractortest.org) - Protractor
-
-[https://cypress.io/](https://cypress.io/) - Cypress
-
-[https://valor-software.com/ngx-bootstrap/#](https://valor-software.com/ngx-bootstrap/#) - NGX-Bootstrap
+- `npm run test-v2` - for testing the 2d version of the app
